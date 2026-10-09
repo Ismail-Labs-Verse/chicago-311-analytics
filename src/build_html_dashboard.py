@@ -23,7 +23,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import config as C  # noqa: E402
 import analysis_helpers as H  # noqa: E402
 
-OUT_HTML = C.DASHBOARDS / "chicago311_dashboard.html"
+# NOTE: this builder emits a lightweight, dependency-free SVG/HTML dashboard.
+# The PRIMARY interactive dashboard (Plotly, with the library inlined so it works
+# offline) is produced by src/build_visuals.py, and that script overwrites
+# `dashboards/chicago311_dashboard.html`. This one writes to a separate path so
+# the two builders cannot clobber each other.
+OUT_HTML = C.DASHBOARDS / "chicago311_dashboard_svg.html"
 MAP_WIDTH, MAP_HEIGHT = 760, 900
 SIMPLIFY_TOL = 0.0006
 
@@ -370,9 +375,9 @@ function lineChart(mount, rows, xKey, yKey, opts={}) {
 }
 
 /* ---------- monthly ---------- */
+/* Mount targets must exist in the document: assigning innerHTML to a null
+   element throws and would abort every chart defined after it. */
 lineChart("chart-monthly", DATA.monthly, "month", "n", {color:"#0B6E99", intFmt:true});
-lineChart("chart-monthly-days", DATA.monthly, "month", "med_days",
-          {color:"#C1440E", ymin:0, height:200});
 
 /* ---------- weekly ---------- */
 lineChart("chart-weekly", DATA.weekly, "week_start", "n_requests",

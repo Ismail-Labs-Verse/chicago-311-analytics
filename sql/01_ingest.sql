@@ -194,8 +194,12 @@ WHERE rn = 1;
 -- ---------------------------------------------------------------------------
 CREATE OR REPLACE TABLE staging.acs_tract AS
 WITH base AS (
+    -- Population is never legitimately negative; the sentinel check guards
+    -- against ACS"estimate not available" codes reaching the analytics.
     SELECT regexp_extract(geo_id, 'US([0-9]{11})$', 1) AS tract_fips,
-           TRY_CAST(B01003_E001 AS BIGINT)             AS total_pop
+           CASE WHEN TRY_CAST(B01003_E001 AS BIGINT) > 0
+                THEN TRY_CAST(B01003_E001 AS BIGINT)
+           END                                          AS total_pop
     FROM read_csv('data/raw/aux/acsdt5y2023-b01003.dat', delim = '|', header = true)
 ),
 race AS (
@@ -205,8 +209,13 @@ race AS (
     FROM read_csv('data/raw/aux/acsdt5y2023-b03002.dat', delim = '|', header = true)
 ),
 income AS (
+    -- ACS uses -666666666 as its "estimate not available" sentinel. Left as a
+    -- number it poisons every average that touches it (it dragged the grade-C
+    -- mean income to about -$8 million), so it is mapped to NULL here.
     SELECT regexp_extract(geo_id, 'US([0-9]{11})$', 1) AS tract_fips,
-           TRY_CAST(B19013_E001 AS DOUBLE)             AS median_hh_income
+           CASE WHEN TRY_CAST(B19013_E001 AS DOUBLE) > 0
+                THEN TRY_CAST(B19013_E001 AS DOUBLE)
+           END                                          AS median_hh_income
     FROM read_csv('data/raw/aux/acsdt5y2023-b19013.dat', delim = '|', header = true)
 )
 SELECT

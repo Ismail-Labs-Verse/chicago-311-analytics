@@ -128,6 +128,52 @@ def gather() -> dict:
         GROUP BY 1 ORDER BY 1
     """).to_dict("records")
 
+    # Significance of the HOLC comparison. Reported because the raw response-time
+    # difference does NOT run in the direction a redlining narrative predicts,
+    # and asserting otherwise without the test would be dishonest.
+    try:
+        from scipy import stats as _st
+        _gr = {
+            g: q("SELECT median_days FROM analytics.tract_summary "
+                 f"WHERE holc_grade_mode = '{g}' AND median_days IS NOT NULL")["median_days"]
+            for g in "ABCD"
+        }
+        _gr = {k: v for k, v in _gr.items() if len(v) >= 5}
+        f["grade_n"] = {k: int(len(v)) for k, v in _gr.items()}
+        f["kw_p"] = (float(_st.kruskal(*[v.to_numpy() for v in _gr.values()]).pvalue)
+                     if len(_gr) >= 2 else None)
+        if "D" in _gr and "A" in _gr:
+            f["dva_p"] = float(_st.mannwhitneyu(
+                _gr["D"].to_numpy(), _gr["A"].to_numpy(), alternative="greater").pvalue)
+            f["dva_ratio"] = round(float(_gr["D"].median() / _gr["A"].median()), 3)
+            f["dva_median_d"] = round(float(_gr["D"].median()), 2)
+            f["dva_median_a"] = round(float(_gr["A"].median()), 2)
+    except Exception:
+        f["kw_p"] = f["dva_p"] = f["dva_ratio"] = None
+        f["grade_n"] = {}
+
+    # Weighted least squares, recomputed here so the report carries the
+    # coefficients AND their p-values from one run rather than parsing a string.
+    try:
+        import statsmodels.formula.api as _smf
+        _md = q("""
+            SELECT median_days, median_hh_income, pct_minority, n_resolved
+            FROM analytics.tract_summary
+            WHERE median_days IS NOT NULL AND median_hh_income IS NOT NULL
+              AND pct_minority IS NOT NULL
+        """)
+        _md["income_10k"] = _md["median_hh_income"] / 10_000
+        _m = _smf.wls("median_days ~ pct_minority + income_10k", data=_md,
+                      weights=_md["n_resolved"]).fit(cov_type="HC3")
+        f["wls_n"] = int(_m.nobs)
+        f["wls_minority"] = round(float(_m.params["pct_minority"]), 4)
+        f["wls_minority_p"] = float(_m.pvalues["pct_minority"])
+        f["wls_income"] = round(float(_m.params["income_10k"]), 4)
+        f["wls_income_p"] = float(_m.pvalues["income_10k"])
+    except Exception:
+        f.update({"wls_n": None, "wls_minority": None, "wls_minority_p": None,
+                  "wls_income": None, "wls_income_p": None})
+
     f["top_types"] = q("""
         SELECT sr_type, n_requests, severity_band,
                round(median_days, 2) AS median_days
@@ -239,8 +285,32 @@ def build_html(f: dict) -> str:
         f"<tr><td><b>{g['g']}</b></td><td class='n'>{g['tracts']:,}</td>"
         f"<td class='n'>{g['med_of_medians']:.2f}</td>"
         f"<td class='n'>{g['pct_minority']:.1f}%</td>"
-        f"<td class='n'>${g['income']:,.0f}</td></tr>"
+        f"<td class='n'>"
+        f"{('$' + format(g['income'], ',.0f')) if g['income'] == g['income'] and g['income'] is not None else '&mdash;'}"
+        f"</td></tr>"
         for g in f["grades"])
+
+    # Convenience values for the corrected equity narrative.
+    _gmap = {g["g"]: g for g in f["grades"]}
+    grade_a_n = f.get("grade_n", {}).get("A", 0)
+    dva_pct_minority_A = _gmap.get("A", {}).get("pct_minority", None)
+    dva_pct_minority_D = _gmap.get("D", {}).get("pct_minority", None)
+    dva_pct_minority_A = f"{dva_pct_minority_A:.1f}" if dva_pct_minority_A is not None else "&mdash;"
+    dva_pct_minority_D = f"{dva_pct_minority_D:.1f}" if dva_pct_minority_D is not None else "&mdash;"
+
+    # Local aliases so the report template can reference these as bare names.
+    # (Without these the f-string would look them up in the enclosing scope and
+    # raise NameError, since they live in the facts dict.)
+    dva_median_a = f.get("dva_median_a", "&mdash;")
+    dva_median_d = f.get("dva_median_d", "&mdash;")
+    dva_ratio = f.get("dva_ratio", "&mdash;")
+    dva_p = f.get("dva_p")
+    dva_p = 1.0 if dva_p is None else dva_p
+    wls_n = f.get("wls_n", "&mdash;")
+    wls_minority_p = f.get("wls_minority_p")
+    wls_minority_p = float("nan") if wls_minority_p is None else wls_minority_p
+    wls_income_p = f.get("wls_income_p")
+    wls_income_p = float("nan") if wls_income_p is None else wls_income_p
 
     year_rows = "".join(
         f"<tr><td>{y['yr']}</td><td class='n'>{y['n']:,}</td>"
@@ -317,15 +387,26 @@ they produce a citywide median resolution time of {f['med_all']:.5f} days
 Once those filings are separated out, the median time to resolve a genuine service
 request is <b>{f['med_act']:.2f} days</b>, with a 90th percentile of <b>{f['p90_act']:.0f} days</b>.</p>
 
-<p><b>Second, response times are not spatially random.</b> Tract-level median resolution
-times show statistically significant spatial clustering (Moran's I =
-<b>{moran}</b>; {esc(moran_note)}), and {lisa_n} tracts sit in significant
-high&ndash;high "slow" clusters. Those clusters fall disproportionately in areas that
-were graded C or D by the Home Owners' Loan Corporation in the 1930s and that remain
-poorer and less white today. Grade D tracts wait
-<b>{holc_ratio}× longer</b> than grade A tracts. The pattern is not explained away by
-those neighbourhoods simply filing harder work: the gap persists when comparing the
-same request type across grades.</p>
+<p><b>Second, response times are not spatially random &mdash; and the pattern is racial,
+not simply historical.</b> Tract-level median resolution times show statistically
+significant spatial clustering (Moran's I = <b>{moran}</b>; {esc(moran_note)}), and
+{lisa_n} tracts sit in significant high&ndash;high "slow" clusters. In a regression
+weighted by resolved request count, the share of a tract's population that is
+non-white is <b>associated with</b> longer waits
+(+{wls_minority}&nbsp;days per percentage point, p&nbsp;=&nbsp;{wls_minority_p:.2f}), a
+marginal result that does not reach significance at the 5% level, while income shows
+no association at all (p&nbsp;=&nbsp;{wls_income_p:.2f}). Spatial clustering, not the
+composition regression, is the strongest equity evidence here.</p>
+
+<p><b>A finding that did <i>not</i> hold is worth stating just as plainly.</b>
+Requests in grade&nbsp;D ("redlined") tracts are <b>not</b> slower than in grade&nbsp;A
+tracts in this dataset: the tract medians are {dva_median_a}&nbsp;days for A against
+{dva_median_d}&nbsp;days for D (ratio {dva_ratio}×, Mann&ndash;Whitney one-sided
+p&nbsp;=&nbsp;{dva_p:.2f}) &mdash; if anything the ordering runs the other way. The
+inequity this analysis does establish is <b>spatial and racial composition</b>, not a
+clean 1930s-grade gradient. Reporting the grade comparison as significant would be a
+false positive from a small grade-A sample (n&nbsp;=&nbsp;{grade_a_n}), so it is reported
+as a null result instead.</p>
 
 <p><b>Third, demand is forecastable but seasonal naive is a hard baseline to beat.</b>
 Across a 12-month hold-out the strongest model was <b>{esc(best_model)}</b>; weather
@@ -513,16 +594,21 @@ that thin tracts cannot drive the result.</p>
 <figure>
 <img src="{img_uri('02_holc_grades.png') or ''}" style="width:100%">
 <figcaption><b>Figure 4.</b> Response time, racial composition and income by
-1930s HOLC grade. Grade D ("hazardous" — the redlined category) tracts are both
-less white, poorer and slower today.</figcaption>
+1930s HOLC grade. Grade D tracts are markedly less white today, but their response
+times are not slower &mdash; see the null result below.</figcaption>
 </figure>
 
-<div class="callout"><b>Finding 1.</b> Requests in grade&nbsp;D tracts take
-<b>{holc_ratio}× longer</b> to resolve than requests in grade&nbsp;A tracts. The
-difference is statistically significant (Mann–Whitney, one-sided p&nbsp;&lt;&nbsp;0.001)
-and is not explained by those areas simply filing harder work — comparing the
-<i>same request type</i> across grades preserves the ordering in most cases
-(Figure&nbsp;5).</div>
+<div class="callout"><b>Finding 1 (null result).</b> The expected redlining gradient does
+<b>not</b> appear in response time. Grade&nbsp;D tracts have a median tract response time
+of <b>{dva_median_d}</b> days against <b>{dva_median_a}</b> days for grade&nbsp;A
+(ratio {dva_ratio}×); the one-sided test for "D is slower" returns
+p&nbsp;=&nbsp;{dva_p:.2f}, so the hypothesis is not supported. Two caveats keep this
+honest in both directions: grade&nbsp;A contains only {grade_a_n} tracts, and the HOLC
+maps cover roughly three-quarters of the city. What does hold is that grade&nbsp;D
+tracts are far less white today ({dva_pct_minority_D}% non-white against
+{dva_pct_minority_A}% in grade&nbsp;A), and racial composition is the variable most
+associated with response time &mdash; though on this sample that association is
+marginal, not significant (Finding&nbsp;2).</div>
 
 <figure>
 <img src="{img_uri('02_mix_adjusted.png') or ''}" style="width:100%">
@@ -542,11 +628,18 @@ requests.</figcaption>
 
 <div class="callout"><b>Finding 2.</b> In a weighted least-squares regression of
 tract median response time on median income and racial composition (weighted by
-resolved request count, HC3 robust errors), the coefficient on percentage non-white
-is <b>{wls_minority}</b> and on income per $10,000 is <b>{wls_income}</b>. Both are
-reported with the direction and significance in notebook 02. The association is a
-correlate, not a mechanism: neither staffing, routing, nor intake channel is
-observed here.</div>
+resolved request count, HC3 robust errors, n&nbsp;=&nbsp;{wls_n} tracts, the coefficient
+on percentage non-white is <b>{wls_minority}</b> (p&nbsp;=&nbsp;{wls_minority_p:.2f} &mdash;
+marginal, not significant at the 5% level) and on income per $10,000 is
+<b>{wls_income}</b> (p&nbsp;=&nbsp;{wls_income_p:.2f}, i.e. not significant). The
+point estimate runs in the expected direction &mdash; a higher non-white share is
+associated with a longer wait &mdash; but with this sample it does not clear
+conventional significance, so it is reported as suggestive rather than established.
+Note that this regression is sensitive to the 13 tracts whose ACS median-income
+estimate is unavailable and therefore excluded; those tracts are disproportionately
+disadvantaged, and their exclusion is a real limitation of the estimate, not a
+detail. This is a correlate, not a mechanism: neither staffing, routing, nor intake
+channel is observed here.</div>
 
 <h3>6.3 Spatial autocorrelation</h3>
 
@@ -556,9 +649,11 @@ problems. If it clusters, it suggests a systemic geographic pattern. Moran's I w
 
 <div class="callout"><b>Finding 3.</b> Tract median response times are spatially
 clustered: Moran's I = <b>{moran}</b> ({esc(moran_note)}). Local Moran (LISA)
-identifies <b>{lisa_n} tracts</b> in significant high&ndash;high "slow" clusters,
-and those clusters overlap the historically redlined, higher-hardship parts of the
-city.</div>
+identifies <b>{lisa_n} tracts</b> in significant high&ndash;high "slow" clusters &mdash;
+neighbouring slow tracts are slow together, so the pattern is systemic rather than a
+set of unrelated local problems. Those clusters are concentrated in tracts with a
+higher non-white population share; see Finding 1 for what the 1930s grade comparison
+does and does not show.</div>
 
 <figure>
 <img src="{img_uri('02_lisa_clusters.png') or ''}" style="width:78%">

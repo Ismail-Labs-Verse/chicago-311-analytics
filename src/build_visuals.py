@@ -195,7 +195,10 @@ def weather_events(weekly: pd.DataFrame) -> list[dict]:
 # ===========================================================================
 # PLOTLY — interactive, self-contained HTML
 # ===========================================================================
-def plotly_html(d: dict, gdf, events: list[dict]) -> Path:
+def plotly_html(d: dict, gdf, events: list[dict], target: Path | None = None) -> Path:
+    """Build the interactive report. `target` selects the output path, so the
+    same proven builder emits both the interactive report and the main
+    dashboard without either depending on a network connection."""
     import plotly.graph_objects as go
     from plotly.subplots import make_subplots
 
@@ -379,7 +382,8 @@ def plotly_html(d: dict, gdf, events: list[dict]) -> Path:
         "no server or network required.</div>",
         "</div></body></html>",
     ]
-    out = OUT / "chicago311_interactive.html"
+    out = Path(target) if target is not None else OUT / "chicago311_interactive.html"
+    out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text("".join(parts), encoding="utf-8")
     return out
 
@@ -595,6 +599,12 @@ def main() -> None:
     html = plotly_html(d, geom, events)
     print(f"  wrote {html.relative_to(C.PROJECT_ROOT)} "
           f"({html.stat().st_size / 1e6:.2f} MB, self-contained)")
+
+    # The main dashboard is the same interactive report, written to the path
+    # referenced in the README and committed as the primary artifact.
+    main_dash = plotly_html(d, geom, events, target=C.DASHBOARDS / "chicago311_dashboard.html")
+    print(f"  wrote {main_dash.relative_to(C.PROJECT_ROOT)} "
+          f"({main_dash.stat().st_size / 1e6:.2f} MB, self-contained)")
 
     pngs = static_pngs(d, geom, events)
     for p in pngs:
