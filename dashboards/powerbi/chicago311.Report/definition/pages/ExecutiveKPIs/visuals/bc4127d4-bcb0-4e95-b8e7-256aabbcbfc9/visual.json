@@ -1,0 +1,71 @@
+{
+  "name": "bc4127d4-bcb0-4e95-b8e7-256aabbcbfc9",
+  "position": {
+    "x": 16,
+    "y": 438,
+    "z": 0,
+    "width": 932,
+    "height": 240
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "monthly_citywide"
+                    }
+                  },
+                  "Property": "month"
+                }
+              },
+              "queryRef": "monthly_citywide.month",
+              "nativeQueryRef": "month",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "monthly_citywide"
+                    }
+                  },
+                  "Property": "median_days"
+                }
+              },
+              "queryRef": "monthly_citywide.median_days",
+              "nativeQueryRef": "median_days",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Monthly median resolution time (actionable)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

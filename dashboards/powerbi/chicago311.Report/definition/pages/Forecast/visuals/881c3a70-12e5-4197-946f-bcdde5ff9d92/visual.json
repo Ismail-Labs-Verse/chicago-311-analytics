@@ -1,0 +1,71 @@
+{
+  "name": "881c3a70-12e5-4197-946f-bcdde5ff9d92",
+  "position": {
+    "x": 16,
+    "y": 332,
+    "z": 0,
+    "width": 520,
+    "height": 300
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "requests_weekly"
+                    }
+                  },
+                  "Property": "week_start"
+                }
+              },
+              "queryRef": "requests_weekly.week_start",
+              "nativeQueryRef": "week_start",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "requests_weekly"
+                    }
+                  },
+                  "Property": "median_days"
+                }
+              },
+              "queryRef": "requests_weekly.median_days",
+              "nativeQueryRef": "median_days",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Weekly median resolution time'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

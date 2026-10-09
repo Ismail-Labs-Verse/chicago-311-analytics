@@ -1,0 +1,80 @@
+table community_area
+	lineageTag: 418dd754-1bbf-49bc-b0bd-cb58ef0b1a2b
+
+	column community_area
+		dataType: int64
+		formatString: #,0
+		lineageTag: 722cd95f-4704-40fc-8295-2800cb8207a5
+		summarizeBy: none
+		sourceColumn: community_area
+
+	column community_area_name
+		dataType: string
+		lineageTag: 21bc4e30-1ea6-46af-9b33-015fd76632aa
+		summarizeBy: none
+		sourceColumn: community_area_name
+
+	column hardship_index
+		dataType: double
+		formatString: #,0.00
+		lineageTag: aaf7acf9-b9ad-4c09-a302-ee3c4313b3c5
+		summarizeBy: average
+		sourceColumn: hardship_index
+
+	column pct_below_poverty
+		dataType: double
+		formatString: #,0.00
+		lineageTag: b019a0bc-23ea-42e3-899a-9e3c04a057a2
+		summarizeBy: average
+		sourceColumn: pct_below_poverty
+
+	column per_capita_income
+		dataType: double
+		formatString: #,0.00
+		lineageTag: f21fd305-8bb1-46a7-b26d-35d8821319dc
+		summarizeBy: average
+		sourceColumn: per_capita_income
+
+	column n_requests
+		dataType: int64
+		formatString: #,0
+		lineageTag: 9ae52304-67fc-40fd-ae8e-e22da51a9c2d
+		summarizeBy: sum
+		sourceColumn: n_requests
+
+	column n_resolved
+		dataType: int64
+		formatString: #,0
+		lineageTag: 8a81dcd3-801b-47c8-ba36-3fdf0f858816
+		summarizeBy: sum
+		sourceColumn: n_resolved
+
+	column median_days
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 0c45fb8e-b41f-4772-9a5b-5226492e9d82
+		summarizeBy: average
+		sourceColumn: median_days
+
+	column p90_days
+		dataType: double
+		formatString: #,0.00
+		lineageTag: a87d6325-0eb5-4500-b755-9edcf283c1b4
+		summarizeBy: average
+		sourceColumn: p90_days
+
+	column n_critical
+		dataType: int64
+		formatString: #,0
+		lineageTag: 5c6eeffd-1578-407f-8a00-6150d69ae20c
+		summarizeBy: sum
+		sourceColumn: n_critical
+
+	partition community_area = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "/powerbi_data/community_area.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true])
+				in
+				    Promoted

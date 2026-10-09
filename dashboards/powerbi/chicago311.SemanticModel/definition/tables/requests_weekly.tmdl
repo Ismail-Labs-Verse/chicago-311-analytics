@@ -1,0 +1,67 @@
+table requests_weekly
+	lineageTag: ad7f8bdf-5e93-4f19-bcfd-47e22a6c28e5
+
+	column week_start
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 6dd74f88-fce1-4ffd-8d3a-e7713e1379de
+		summarizeBy: none
+		sourceColumn: week_start
+
+	column n_requests
+		dataType: int64
+		formatString: #,0
+		lineageTag: d950c74c-b699-4290-98d8-89b2e17492b2
+		summarizeBy: sum
+		sourceColumn: n_requests
+
+	column n_critical
+		dataType: int64
+		formatString: #,0
+		lineageTag: 3bbd02f2-23cc-43ac-aff3-68d348cd7d46
+		summarizeBy: sum
+		sourceColumn: n_critical
+
+	column n_high
+		dataType: int64
+		formatString: #,0
+		lineageTag: 7124fda3-abdd-4643-a208-8ad77d6580dd
+		summarizeBy: sum
+		sourceColumn: n_high
+
+	column median_days
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 19c09644-a833-4497-a69c-f32c77fa1150
+		summarizeBy: average
+		sourceColumn: median_days
+
+	column avg_tmax_c
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 97fbd50c-5a2c-4c0c-a61f-00ac08d1f567
+		summarizeBy: average
+		sourceColumn: avg_tmax_c
+
+	column total_prcp_mm
+		dataType: double
+		formatString: #,0.00
+		lineageTag: c57be619-4e82-44aa-87e4-464c7a1bbb6e
+		summarizeBy: sum
+		sourceColumn: total_prcp_mm
+
+	column total_snow_mm
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 6fa6ca76-a346-4d18-b318-0b21096450df
+		summarizeBy: sum
+		sourceColumn: total_snow_mm
+
+	partition requests_weekly = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "/powerbi_data/requests_weekly.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true])
+				in
+				    Promoted

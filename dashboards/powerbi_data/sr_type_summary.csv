@@ -1,0 +1,111 @@
+sr_type,severity_band,severity_weight,is_informational,n_requests,median_days,p90_days,n_unresolved,n_reversed_timestamps
+311 INFORMATION ONLY CALL,low,0.2,True,1529906,,,0,0
+Aircraft Noise Complaint,medium,0.45,True,765455,,,0,0
+Graffiti Removal Request,high,0.7,False,211223,0.971,3.02,1164,0
+Garbage Cart Maintenance,high,0.7,False,112772,21.8,62.87,290,0
+Pothole in Street Complaint,high,0.7,False,111152,16.003,111.04,197,0
+Rodent Baiting/Rat Complaint,high,0.7,False,107189,4.3,15.13,0,0
+Street Light Out Complaint,high,0.7,False,105482,3.998,32.52,585,0
+Abandoned Vehicle Complaint,critical,1.0,False,104077,11.804,50.97,1685,0
+Tree Trim Request (NO LONGER BEING ACCEPTED),medium,0.45,False,90543,286.055,450.99,10,0
+Tree Debris Clean-Up Request,medium,0.45,False,59945,5.237,32.95,12,0
+Traffic Signal Out Complaint,medium,0.45,False,57805,0.295,37.61,941,0
+Tree Emergency,critical,1.0,False,48712,0.83,5.47,175,0
+Building Violation,critical,1.0,False,47151,30.021,147.68,2,0
+Blue Recycling Cart,high,0.7,False,45307,36.939,118.68,122,0
+Weed Removal Request,medium,0.45,False,44712,5.759,37.72,7,0
+Sign Repair Request - All Other Signs,medium,0.45,False,40336,142.51,514.51,1072,0
+Tree Removal Inspection,medium,0.45,False,40150,147.189,377.33,3279,0
+Water Lead Test Kit Request,critical,1.0,False,34963,90.32,373.14,20121,0
+Dead Animal Pick-Up Request,high,0.7,False,33534,1.276,3.6,0,0
+Sanitation Code Violation,high,0.7,False,32351,3.945,40.14,23,0
+Yard Waste Pick-Up Request,medium,0.45,False,30913,1.814,8.82,0,0
+Fly Dumping Complaint,medium,0.45,False,29655,4.992,47.75,32,0
+Water in Basement Complaint,critical,1.0,False,28375,0.232,2.06,60,0
+Stray Animal Complaint,medium,0.45,False,27120,6.67,34.91,28,0
+Tree Planting Request,medium,0.45,False,26184,235.003,696.82,9491,0
+Check for Leak,medium,0.45,False,23704,1.761,50.07,188,0
+Finance Parking Code Enforcement Review,medium,0.45,False,23617,,,0,0
+Water On Street Complaint,critical,1.0,False,22254,1.904,116.93,229,0
+Alley Light Out Complaint,medium,0.45,False,21689,19.745,154.11,23,0
+Alley Pothole Complaint,high,0.7,False,21589,32.939,155.09,34,0
+Sewer Cleaning Inspection Request,critical,1.0,False,21579,10.814,172.0,170,0
+Report an Injured Animal,medium,0.45,False,19675,0.524,1.59,1,0
+Missed Garbage Pick-Up Complaint,high,0.7,False,19188,2.508,12.04,7,0
+Sidewalk Inspection Request,medium,0.45,False,18630,463.817,1275.97,2876,0
+Inspect Public Way Request,medium,0.45,False,17527,3.112,191.0,1151,0
+Buildings - Plumbing Violation,medium,0.45,False,17410,61.552,140.96,30,0
+Open Fire Hydrant Complaint,critical,1.0,False,15240,0.237,1.56,20,1
+Ice and Snow Removal Request,high,0.7,False,14692,0.201,1.04,1,0
+Snow – Uncleared Sidewalk Complaint,high,0.7,False,14149,9.199,21.84,43,0
+Vicious Animal Complaint,medium,0.45,False,14048,0.433,1.73,0,0
+Recycling Pick Up,high,0.7,False,13627,1.937,12.95,6,0
+Nuisance Animal Complaint,medium,0.45,False,12944,3.998,32.5,8,0
+Vacant/Abandoned Building Complaint,critical,1.0,False,12632,29.17,88.85,4,0
+Street Cleaning Request,medium,0.45,False,12022,2.701,20.02,25,0
+Sewer Cave-In Inspection Request,critical,1.0,False,11529,22.114,217.03,148,0
+No Building Permit and Construction Violation,medium,0.45,False,11392,41.004,271.9,2212,0
+Clean Vacant Lot Request,critical,1.0,False,11092,10.537,53.37,13,0
+Sign Repair Request - Stop Sign,medium,0.45,False,10654,0.489,0.92,76,0
+Street Light Pole Damage Complaint,high,0.7,False,10076,0.418,53.93,671,0
+No Water Complaint,critical,1.0,False,9099,0.101,2.16,18,0
+E-Scooter Parking Complaint,medium,0.45,False,8984,0.206,6.95,1,0
+Business Complaints,medium,0.45,False,8675,13.794,60.99,23,0
+City Vehicle Sticker Violation,medium,0.45,False,8344,10.376,31.55,0,0
+Cab Feedback,medium,0.45,False,8212,33.646,87.96,7,0
+Pet Wellness Check Request,medium,0.45,False,7515,6.852,61.98,64,0
+Restaurant Complaint,medium,0.45,False,6782,14.813,107.33,0,0
+Water Lead Test Visit Request,critical,1.0,False,5866,73.011,413.13,930,0
+Sign Repair Request - One Way Sign,medium,0.45,False,4929,0.532,1.76,3,0
+Snow - Object/Dibs Removal Request,high,0.7,False,4814,2.214,15.2,1,0
+Low Water Pressure Complaint,critical,1.0,False,4634,1.68,53.38,20,0
+Shared Cost Sidewalk Program Request,medium,0.45,False,4600,436.102,1135.52,2372,0
+Coyote Interaction Complaint,medium,0.45,False,4091,1.311,4.86,0,0
+Divvy Bike Parking Complaint,medium,0.45,False,3440,0.088,0.47,0,0
+Alley Sewer Inspection Request,critical,1.0,False,3163,21.786,198.86,49,0
+Consumer Fraud Complaint,medium,0.45,False,3080,46.571,262.77,11,0
+Wire Basket Request,medium,0.45,False,2655,2.126,25.03,5,0
+Street Light On During Day Complaint,high,0.7,False,2529,118.852,525.0,3,0
+Vehicle Parked in Bike Lane Complaint,medium,0.45,False,2326,,,0,0
+Street Light Pole Door Missing Complaint,high,0.7,False,2099,209.267,806.36,138,0
+Dead Bird,medium,0.45,False,2004,2.017,5.7,0,0
+Bee/Wasp Removal,medium,0.45,False,1749,4.062,13.95,0,0
+Water Quality Concern,critical,1.0,False,1632,12.871,161.01,171,0
+Consumer Retail Business Complaint,medium,0.45,False,1626,15.304,89.95,19,0
+Bicycle Request/Complaint,medium,0.45,False,1581,28.088,860.02,378,0
+Sign Repair Request - Do Not Enter Sign,medium,0.45,False,1512,0.73,1.91,3,0
+Porch Inspection Request,medium,0.45,False,1098,5.948,19.88,0,0
+Shared Housing/Vacation Rental Complaint,medium,0.45,False,995,7.919,72.02,1,0
+Viaduct Light Out Complaint,medium,0.45,False,837,93.434,386.38,11,0
+Sidewalk Café/Outdoor Dining Complaint,medium,0.45,False,758,13.572,50.78,6,0
+Recycling Inspection Request,high,0.7,False,744,10.107,77.49,1,0
+No Air Conditioning,medium,0.45,False,714,0.672,3.03,0,0
+Public Vehicle Complaint,medium,0.45,False,704,9.569,69.29,1,0
+Cable TV Complaint,medium,0.45,False,702,19.983,57.11,0,0
+Lead Inspection Request,critical,1.0,False,693,2.959,106.97,2,0
+Commercial Fire Safety Inspection Request,critical,1.0,False,654,11.94,1182.86,0,0
+Clean and Green Program Request,medium,0.45,False,635,21.89,84.03,0,0
+Protected Bike Lane - Debris Removal,medium,0.45,False,615,326.091,536.38,0,0
+Animal In Trap Complaint,medium,0.45,False,610,0.579,2.39,0,0
+Snow Removal - Protected Bike Lane or Bridge Sidewalk,high,0.7,False,580,112.435,118.58,0,0
+Wage Complaint,medium,0.45,False,541,39.228,296.44,72,0
+Home Buyer Program Info Request,medium,0.45,False,527,7.427,12.53,0,0
+Pushcart Food Vendor Complaint,medium,0.45,False,504,6.856,117.34,0,0
+Ridesharing Complaint,medium,0.45,False,498,34.67,196.52,2,0
+Paid Sick Leave Violation,medium,0.45,False,486,44.462,534.08,48,0
+Liquor Establishment Complaint,medium,0.45,False,396,32.601,49.89,0,0
+Tobacco - General Complaint,medium,0.45,False,373,17.847,63.13,0,0
+Tobacco - Sale to Minors Complaint,medium,0.45,False,277,17.617,83.27,0,0
+Bungalow/Vintage Home Information Request,low,0.2,False,226,7.644,12.47,0,0
+Inaccurate Fuel Pump Complaint,high,0.7,False,163,34.604,281.07,0,0
+E-Scooter,medium,0.45,False,161,,,0,0
+No Solicitation Complaint,medium,0.45,False,154,24.45,178.16,0,0
+Outdated Merchandise Complaint,medium,0.45,False,137,12.006,52.3,0,0
+Renters and Foreclosure Complaint,medium,0.45,False,103,31.509,105.32,0,0
+Pavement Cave-In Inspection Request,medium,0.45,False,99,8.955,250.9,8,0
+Submerged Divvy or Lime Device in the Lake/River,high,0.7,False,25,312.13,400.72,5,0
+Smokeless Tobacco at Sports Event Complaint,medium,0.45,False,15,10.781,181.38,0,0
+Licensed Pharmaceutical Representative Complaint,high,0.7,False,14,72.966,880.28,0,0
+Inaccurate Retail Scales Complaint,high,0.7,False,10,54.637,169.5,0,0
+Extreme Weather Notification,medium,0.45,False,3,,,0,0
+Petcoke Dust Complaint,medium,0.45,False,1,5.544,5.54,0,0

@@ -1,0 +1,71 @@
+{
+  "name": "e5166dc2-9961-4c88-a083-802a1f3aac80",
+  "position": {
+    "x": 652,
+    "y": 16,
+    "z": 0,
+    "width": 420,
+    "height": 400
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "tract_equity"
+                    }
+                  },
+                  "Property": "holc_grade"
+                }
+              },
+              "queryRef": "tract_equity.holc_grade",
+              "nativeQueryRef": "holc_grade",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "tract_equity"
+                    }
+                  },
+                  "Property": "median_days"
+                }
+              },
+              "queryRef": "tract_equity.median_days",
+              "nativeQueryRef": "median_days",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Median days by HOLC grade'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

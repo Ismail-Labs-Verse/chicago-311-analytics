@@ -1,0 +1,71 @@
+{
+  "name": "70f752f7-b8de-4ad7-b360-03cd00159a91",
+  "position": {
+    "x": 16,
+    "y": 162,
+    "z": 0,
+    "width": 932,
+    "height": 260
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "monthly_citywide"
+                    }
+                  },
+                  "Property": "month"
+                }
+              },
+              "queryRef": "monthly_citywide.month",
+              "nativeQueryRef": "month",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "monthly_citywide"
+                    }
+                  },
+                  "Property": "n_requests"
+                }
+              },
+              "queryRef": "monthly_citywide.n_requests",
+              "nativeQueryRef": "n_requests",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Monthly 311 demand'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

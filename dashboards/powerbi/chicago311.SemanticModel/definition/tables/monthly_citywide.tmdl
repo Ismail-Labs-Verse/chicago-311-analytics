@@ -1,0 +1,60 @@
+table monthly_citywide
+	lineageTag: 9ca8ee22-769a-4d35-b716-4be478d1d0f2
+
+	column month
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: f913ecc0-d9b7-4ad2-96cc-fea6cf69936e
+		summarizeBy: none
+		sourceColumn: month
+
+	column n_requests
+		dataType: int64
+		formatString: #,0
+		lineageTag: fd8b4503-da01-41e8-bd26-15165f04b9c0
+		summarizeBy: sum
+		sourceColumn: n_requests
+
+	column n_actionable
+		dataType: int64
+		formatString: #,0
+		lineageTag: 4b26cd86-a02b-417e-8042-152a2d0b568f
+		summarizeBy: sum
+		sourceColumn: n_actionable
+
+	column median_days
+		dataType: double
+		formatString: #,0.00
+		lineageTag: a8890059-9ce0-402c-88af-b7255ec6cd53
+		summarizeBy: average
+		sourceColumn: median_days
+
+	column avg_tmax_c
+		dataType: double
+		formatString: #,0.00
+		lineageTag: ec5a1780-3b45-435c-86aa-a74be408661e
+		summarizeBy: average
+		sourceColumn: avg_tmax_c
+
+	column total_prcp_mm
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 5abaf8a7-137f-4cb7-9a9f-d72c3e42f31e
+		summarizeBy: sum
+		sourceColumn: total_prcp_mm
+
+	column total_snow_mm
+		dataType: double
+		formatString: #,0.00
+		lineageTag: a2f2b4d3-8828-4dbd-a24d-1f6e4a476253
+		summarizeBy: sum
+		sourceColumn: total_snow_mm
+
+	partition monthly_citywide = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "/powerbi_data/monthly_citywide.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true])
+				in
+				    Promoted

@@ -1,0 +1,52 @@
+{
+  "name": "95dd58da-ef9b-4bee-8552-1c0cb3ab9694",
+  "position": {
+    "x": 16,
+    "y": 16,
+    "z": 0,
+    "width": 300,
+    "height": 130
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "monthly_citywide"
+                    }
+                  },
+                  "Property": "n_requests"
+                }
+              },
+              "queryRef": "monthly_citywide.n_requests",
+              "nativeQueryRef": "n_requests",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Total requests'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

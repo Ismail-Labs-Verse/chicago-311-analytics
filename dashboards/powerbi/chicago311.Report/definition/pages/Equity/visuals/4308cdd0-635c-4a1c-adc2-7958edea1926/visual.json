@@ -1,0 +1,82 @@
+{
+  "name": "4308cdd0-635c-4a1c-adc2-7958edea1926",
+  "position": {
+    "x": 652,
+    "y": 432,
+    "z": 0,
+    "width": 420,
+    "height": 300
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "community_area"
+                    }
+                  },
+                  "Property": "community_area_name"
+                }
+              },
+              "queryRef": "community_area.community_area_name",
+              "nativeQueryRef": "community_area_name",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "community_area"
+                    }
+                  },
+                  "Property": "hardship_index"
+                }
+              },
+              "queryRef": "community_area.hardship_index",
+              "nativeQueryRef": "hardship_index",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "community_area"
+                    }
+                  },
+                  "Property": "median_days"
+                }
+              },
+              "queryRef": "community_area.median_days",
+              "nativeQueryRef": "median_days",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Community-area hardship vs. response'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

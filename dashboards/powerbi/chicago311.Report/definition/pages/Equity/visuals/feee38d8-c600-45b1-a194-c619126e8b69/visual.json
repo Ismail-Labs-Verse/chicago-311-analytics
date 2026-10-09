@@ -1,0 +1,71 @@
+{
+  "name": "feee38d8-c600-45b1-a194-c619126e8b69",
+  "position": {
+    "x": 16,
+    "y": 16,
+    "z": 0,
+    "width": 620,
+    "height": 400
+  },
+  "visual": {
+    "visualType": "map",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "tract_equity"
+                    }
+                  },
+                  "Property": "tract_fips"
+                }
+              },
+              "queryRef": "tract_equity.tract_fips",
+              "nativeQueryRef": "tract_fips",
+              "active": true
+            }
+          ]
+        },
+        "Size": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "tract_equity"
+                    }
+                  },
+                  "Property": "median_days"
+                }
+              },
+              "queryRef": "tract_equity.median_days",
+              "nativeQueryRef": "median_days",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Choropleth \u2014 tract median resolution time (join the GeoJSON layer)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

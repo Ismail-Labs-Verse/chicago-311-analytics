@@ -1,0 +1,92 @@
+table tract_equity
+	lineageTag: 6e4e8102-4229-43d1-a911-08ee05f8a522
+
+	column tract_fips
+		dataType: string
+		lineageTag: d0c36f0d-7f27-4421-90e3-24893c9b229b
+		summarizeBy: none
+		sourceColumn: tract_fips
+
+	column community_area
+		dataType: int64
+		formatString: #,0
+		lineageTag: 94a52062-cdce-4469-ab0e-2bda8d38dd26
+		summarizeBy: none
+		sourceColumn: community_area
+
+	column community_name
+		dataType: string
+		lineageTag: 6cf9ffc4-fa6c-48a5-9744-ecce5419fc01
+		summarizeBy: none
+		sourceColumn: community_name
+
+	column total_pop
+		dataType: int64
+		formatString: #,0
+		lineageTag: 8e653689-ee21-4c5f-a467-7af6c7a569ce
+		summarizeBy: sum
+		sourceColumn: total_pop
+
+	column median_hh_income
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 0bdb654d-9a1c-47e4-9ed9-ae763f9b119a
+		summarizeBy: average
+		sourceColumn: median_hh_income
+
+	column pct_minority
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 6e5cf35e-0023-4e43-b68b-a32e33cd84ff
+		summarizeBy: average
+		sourceColumn: pct_minority
+
+	column holc_grade
+		dataType: string
+		lineageTag: 3adae773-565d-4bb7-8098-926ba5e8c910
+		summarizeBy: none
+		sourceColumn: holc_grade
+
+	column n_requests
+		dataType: int64
+		formatString: #,0
+		lineageTag: 4e700a6a-d686-431b-9f11-b58844e58dc5
+		summarizeBy: sum
+		sourceColumn: n_requests
+
+	column n_resolved
+		dataType: int64
+		formatString: #,0
+		lineageTag: 1d09fef5-828c-4033-9cbf-3dcf71dbbf31
+		summarizeBy: sum
+		sourceColumn: n_resolved
+
+	column median_days
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 57737b28-02f7-4fbb-aef2-663cbf0213b7
+		summarizeBy: average
+		sourceColumn: median_days
+
+	column p90_days
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 7c77d08d-e2a9-4622-8aea-7d563ba17c8d
+		summarizeBy: average
+		sourceColumn: p90_days
+
+	column severity_weighted_days
+		dataType: double
+		formatString: #,0.00
+		lineageTag: f732ca71-5614-4edb-8031-b4609f9295e2
+		summarizeBy: average
+		sourceColumn: severity_weighted_days
+
+	partition tract_equity = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "/powerbi_data/tract_equity.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true])
+				in
+				    Promoted

@@ -1,0 +1,71 @@
+{
+  "name": "bd9a32c4-e69c-4a70-b5aa-25fa7a07f152",
+  "position": {
+    "x": 16,
+    "y": 16,
+    "z": 0,
+    "width": 1056,
+    "height": 300
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "requests_weekly"
+                    }
+                  },
+                  "Property": "week_start"
+                }
+              },
+              "queryRef": "requests_weekly.week_start",
+              "nativeQueryRef": "week_start",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "requests_weekly"
+                    }
+                  },
+                  "Property": "n_requests"
+                }
+              },
+              "queryRef": "requests_weekly.n_requests",
+              "nativeQueryRef": "n_requests",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Weekly volume (anomaly review)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

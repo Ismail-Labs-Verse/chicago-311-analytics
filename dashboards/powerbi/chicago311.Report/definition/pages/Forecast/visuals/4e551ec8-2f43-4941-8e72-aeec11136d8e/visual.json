@@ -1,0 +1,71 @@
+{
+  "name": "4e551ec8-2f43-4941-8e72-aeec11136d8e",
+  "position": {
+    "x": 552,
+    "y": 332,
+    "z": 0,
+    "width": 520,
+    "height": 300
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "sr_type_summary"
+                    }
+                  },
+                  "Property": "sr_type"
+                }
+              },
+              "queryRef": "sr_type_summary.sr_type",
+              "nativeQueryRef": "sr_type",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "sr_type_summary"
+                    }
+                  },
+                  "Property": "n_requests"
+                }
+              },
+              "queryRef": "sr_type_summary.n_requests",
+              "nativeQueryRef": "n_requests",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Volume by request type'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

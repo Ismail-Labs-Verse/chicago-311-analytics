@@ -1,0 +1,52 @@
+{
+  "name": "ca5fb3ee-a6c9-4bcf-9737-2b1295de0fbb",
+  "position": {
+    "x": 332,
+    "y": 16,
+    "z": 0,
+    "width": 300,
+    "height": 130
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "monthly_citywide"
+                    }
+                  },
+                  "Property": "median_days"
+                }
+              },
+              "queryRef": "monthly_citywide.median_days",
+              "nativeQueryRef": "median_days",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Median days (actionable)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

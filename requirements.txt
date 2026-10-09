@@ -1,0 +1,42 @@
+# chicago-311-analytics — Python dependencies
+#
+# Verified working environment (Apple Silicon / macOS):
+#   conda create -n chicago311 -c conda-forge python=3.12 \
+#       duckdb lightgbm geopandas pyarrow jupyter statsmodels \
+#       scikit-learn matplotlib seaborn scipy
+#
+# The versions below are the ones the committed pipeline was actually executed
+# against (see README "Reproducing" section).
+
+# --- Core data / compute ---
+duckdb==1.5.6
+pandas==3.0.6
+numpy==2.5.3
+pyarrow==25.0.0
+
+# --- Statistics / ML ---
+scipy==1.18.1
+statsmodels==0.15.0          # SARIMAX
+scikit-learn==1.9.1          # IsolationForest, preprocessing, metrics
+lightgbm==4.7.0              # gradient-boosted demand model
+
+# --- Geospatial ---
+geopandas==1.2.0
+shapely==2.2.0
+libpysal>=4.8                # spatial weights (queen contiguity)
+esda>=2.5                    # Moran's I / LISA spatial autocorrelation
+
+# --- Visualisation ---
+matplotlib==3.11.2
+seaborn==0.13.2
+
+# --- Notebooks ---
+jupyterlab>=4.0
+nbclient>=0.10               # headless notebook execution (reproducible runs)
+nbformat>=5.10
+
+# --- Dashboard extracts ---
+tableauhyperapi==0.0.26479   # writes real Tableau .hyper data extracts
+
+# --- Report rendering (optional; Chrome/Chromium headless also supported) ---
+# weasyprint>=62              # only if a non-Chrome HTML->PDF path is wanted

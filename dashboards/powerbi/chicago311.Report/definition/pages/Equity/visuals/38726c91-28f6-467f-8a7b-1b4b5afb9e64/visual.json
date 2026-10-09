@@ -1,0 +1,90 @@
+{
+  "name": "38726c91-28f6-467f-8a7b-1b4b5afb9e64",
+  "position": {
+    "x": 16,
+    "y": 432,
+    "z": 0,
+    "width": 620,
+    "height": 300
+  },
+  "visual": {
+    "visualType": "scatterChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "tract_equity"
+                    }
+                  },
+                  "Property": "pct_minority"
+                }
+              },
+              "queryRef": "tract_equity.pct_minority",
+              "nativeQueryRef": "pct_minority",
+              "active": true
+            }
+          ]
+        },
+        "X": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "tract_equity"
+                    }
+                  },
+                  "Property": "median_hh_income"
+                }
+              },
+              "queryRef": "tract_equity.median_hh_income",
+              "nativeQueryRef": "median_hh_income",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "tract_equity"
+                    }
+                  },
+                  "Property": "median_days"
+                }
+              },
+              "queryRef": "tract_equity.median_days",
+              "nativeQueryRef": "median_days",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Income vs. resolution time'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

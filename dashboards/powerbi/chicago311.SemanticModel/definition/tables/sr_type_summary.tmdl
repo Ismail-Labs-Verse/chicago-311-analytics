@@ -1,0 +1,71 @@
+table sr_type_summary
+	lineageTag: bbe0dc59-0fec-43ae-967a-f97c07b7ae23
+
+	column sr_type
+		dataType: string
+		lineageTag: 9817955b-ead3-4a46-88a7-bcf583993dce
+		summarizeBy: none
+		sourceColumn: sr_type
+
+	column severity_band
+		dataType: string
+		lineageTag: 510f4b81-8292-44ea-aad9-a355e3b15a10
+		summarizeBy: none
+		sourceColumn: severity_band
+
+	column severity_weight
+		dataType: double
+		formatString: #,0.00
+		lineageTag: f8ff966d-562f-4961-9a8b-c84e403a2dd3
+		summarizeBy: average
+		sourceColumn: severity_weight
+
+	column is_informational
+		dataType: boolean
+		lineageTag: c5488baa-34a2-4bd3-980d-e21aa8f0cdf2
+		summarizeBy: none
+		sourceColumn: is_informational
+
+	column n_requests
+		dataType: int64
+		formatString: #,0
+		lineageTag: f1e10fa0-b9e9-4cdd-9f43-bc061033ad51
+		summarizeBy: sum
+		sourceColumn: n_requests
+
+	column median_days
+		dataType: double
+		formatString: #,0.00
+		lineageTag: f15e49a0-e6f5-4857-a311-3455872b4d29
+		summarizeBy: average
+		sourceColumn: median_days
+
+	column p90_days
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 9a77efe4-58f8-4905-8561-bb981b36780a
+		summarizeBy: average
+		sourceColumn: p90_days
+
+	column n_unresolved
+		dataType: int64
+		formatString: #,0
+		lineageTag: 46e7817f-fd46-4cae-8925-8a90e8f7de27
+		summarizeBy: sum
+		sourceColumn: n_unresolved
+
+	column n_reversed_timestamps
+		dataType: int64
+		formatString: #,0
+		lineageTag: 1e90d8c6-8444-4e11-9ab8-755a4e36f992
+		summarizeBy: sum
+		sourceColumn: n_reversed_timestamps
+
+	partition sr_type_summary = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "/powerbi_data/sr_type_summary.csv"), [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars=true])
+				in
+				    Promoted

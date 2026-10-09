@@ -1,0 +1,3 @@
+relationship a1a28732-db11-4281-bda9-2cbee59f37c2
+	fromColumn: tract_equity.community_area
+	toColumn: community_area.community_area

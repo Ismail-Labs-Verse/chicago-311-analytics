@@ -1,0 +1,2 @@
+expression DataFolder = "dashboards/powerbi_data" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	annotation PBI_ResultType = Text

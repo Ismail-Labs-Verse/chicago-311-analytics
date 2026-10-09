@@ -1,0 +1,52 @@
+{
+  "name": "6d01fde4-ede9-49d4-98b6-6d937fcbb78e",
+  "position": {
+    "x": 648,
+    "y": 16,
+    "z": 0,
+    "width": 300,
+    "height": 130
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "community_area"
+                    }
+                  },
+                  "Property": "n_critical"
+                }
+              },
+              "queryRef": "community_area.n_critical",
+              "nativeQueryRef": "n_critical",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Critical-band requests'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
