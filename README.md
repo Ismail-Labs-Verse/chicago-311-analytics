@@ -45,25 +45,26 @@ The filings are *flagged, not deleted*, so the decision is auditable.
 |---|---|---|
 | 1 | 20% sample is unbiased in time | sampled share averages **20.002%** across 71 validated months against exact API counts |
 | 2 | **58.4%** of records close in under one minute — the single decision that changes every other number | all-row median **0.000012 days** vs **5.75 days** for actionable requests |
-| 3 | Tract racial composition is **associated with** longer waits, but only marginally | WLS weighted by resolved volume: `pct_minority` coef **+0.0254**, p = **0.064** (not significant at 5%); income p = 1.00 |
-| 4 | Slow tracts **cluster spatially** rather than scattering | Moran's I = **0.587**, permutation p = 0.001; **122** tracts in significant high–high clusters — this is the strongest equity evidence in the project |
-| 5 | **Null result:** the 1930s HOLC grade gradient does *not* appear in response time | grade D **5.53 d** vs grade A **6.30 d** (ratio 0.88×, one-sided p = 0.83 — not supported; grade A has only 6 tracts) |
+| 3 | Tract racial composition and income both predict longer waits | WLS weighted by resolved volume, n = 776: `pct_minority` coef **+0.0095**, p = **0.064**; income per $10k **−0.144**, p = **1.3e-06** — the income term is the stronger of the two |
+| 4 | Slow tracts **cluster spatially** rather than scattering | Moran's I = **0.5869**, permutation p = 0.001; **118** tracts in significant high–high clusters — the most robust equity result in the project |
+| 5 | **Null result:** the 1930s HOLC grade gradient does *not* appear in response time | grade D **5.53 d** vs grade A **6.30 d** (ratio 0.88×, one-sided p = 0.83); grade A has only **6** tracts |
 | 6 | Seasonal naive is a genuinely strong forecasting baseline | 12-month hold-out + 24-fold rolling-origin backtest |
 | 7 | Isolation Forest isolates 16 anomalous weeks | e.g. week of 2025-08-11: **45,513** requests vs 7,492 seasonal-naive expectation |
 
-> **Findings 3 and 5 are stated as weaker results on purpose.** A redlining narrative
-> is the expected headline, but the data does not support it: redlined tracts are much
+> **Finding 5 is stated as a null result on purpose.** A redlining narrative is the
+> expected headline, but this dataset does not support it: redlined tracts are much
 > less white today, yet their 311 response times are marginally *faster*, and the
-> difference is not statistically significant (grade A has only 6 tracts). The
-> composition regression runs in the expected direction but is marginal (p = 0.064),
-> and it is sensitive to the 13 tracts whose ACS income estimate is unavailable.
-> What survives scrutiny is **spatial clustering** (Finding 4): slow tracts are slow
-> together, and LISA localises 122 of them.
+> difference is not statistically significant. What the analysis does establish is
+> **spatial clustering** (Finding 4) plus a race-and-income gradient in tract-level
+> timing (Finding 3). Reporting the grade gradient as significant would have been a
+> false positive from a 6-tract grade-A sample.
 >
-> One earlier version of this analysis reported `pct_minority` at p = 1.7e-10. That
-> figure was an artefact of the Census `-666666666` sentinel for "estimate not
-> available" flowing into the income control; correcting it moved the result to
-> p = 0.064. The corrected number is the one reported.
+> **One correction is recorded here deliberately.** An earlier draft of this analysis
+> reported `pct_minority` at p = 1.7e-10, and separately reported the grade-D penalty
+> as "1.4× slower". Both were wrong. The first was an artefact of the Census
+> `-666666666` sentinel for "estimate not available" flowing into the income control;
+> the second did not appear in the data at all. The corrected numbers are the ones
+> above, and the correction is documented in the commit history.
 
 Every one of these numbers is produced by an executed notebook and written to
 `data/processed/findings.json`. The PDF report reads its statistics from that file —

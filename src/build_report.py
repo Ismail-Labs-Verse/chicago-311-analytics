@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import base64
 import json
+import re
 import sys
 import time
 from datetime import datetime
@@ -152,27 +153,27 @@ def gather() -> dict:
         f["kw_p"] = f["dva_p"] = f["dva_ratio"] = None
         f["grade_n"] = {}
 
-    # Weighted least squares, recomputed here so the report carries the
-    # coefficients AND their p-values from one run rather than parsing a string.
-    try:
-        import statsmodels.formula.api as _smf
-        _md = q("""
-            SELECT median_days, median_hh_income, pct_minority, n_resolved
-            FROM analytics.tract_summary
-            WHERE median_days IS NOT NULL AND median_hh_income IS NOT NULL
-              AND pct_minority IS NOT NULL
-        """)
-        _md["income_10k"] = _md["median_hh_income"] / 10_000
-        _m = _smf.wls("median_days ~ pct_minority + income_10k", data=_md,
-                      weights=_md["n_resolved"]).fit(cov_type="HC3")
-        f["wls_n"] = int(_m.nobs)
-        f["wls_minority"] = round(float(_m.params["pct_minority"]), 4)
-        f["wls_minority_p"] = float(_m.pvalues["pct_minority"])
-        f["wls_income"] = round(float(_m.params["income_10k"]), 4)
-        f["wls_income_p"] = float(_m.pvalues["income_10k"])
-    except Exception:
-        f.update({"wls_n": None, "wls_minority": None, "wls_minority_p": None,
-                  "wls_income": None, "wls_income_p": None})
+    # Regression statistics are READ from the notebooks' recorded findings, not
+    # re-derived here. An earlier version recomputed the model in this file and
+    # silently diverged from the notebook, producing a different coefficient and
+    # a conflicting significance claim; the findings registry is the single
+    # source of truth for anything a notebook already computed.
+    def _finding(key: str) -> dict:
+        return (f["findings"] or {}).get(key, {})
+
+    def _p_from_note(note: str | None):
+        m = re.search(r"p\s*=\s*([0-9.eE+-]+)", note or "")
+        return float(m.group(1)) if m else None
+
+    _wmin, _winc = _finding("wls_pct_minority_coef"), _finding("wls_income_10k_coef")
+    f["wls_minority"] = _wmin.get("value")
+    f["wls_minority_p"] = _p_from_note(_wmin.get("note"))
+    f["wls_income"] = _winc.get("value")
+    f["wls_income_p"] = _p_from_note(_winc.get("note"))
+    _n = re.search(r"n\s*=\s*(\d+)", _wmin.get("note") or "")
+    f["wls_n"] = int(_n.group(1)) if _n else None
+    # The LISA cluster count and the grade comparison are owned by notebook 02.
+    f["lisa_n"] = (f["findings"].get("lisa_slow_cluster_tracts", {}).get("value"))
 
     f["top_types"] = q("""
         SELECT sr_type, n_requests, severity_band,
@@ -387,26 +388,27 @@ they produce a citywide median resolution time of {f['med_all']:.5f} days
 Once those filings are separated out, the median time to resolve a genuine service
 request is <b>{f['med_act']:.2f} days</b>, with a 90th percentile of <b>{f['p90_act']:.0f} days</b>.</p>
 
-<p><b>Second, response times are not spatially random &mdash; and the pattern is racial,
-not simply historical.</b> Tract-level median resolution times show statistically
-significant spatial clustering (Moran's I = <b>{moran}</b>; {esc(moran_note)}), and
-{lisa_n} tracts sit in significant high&ndash;high "slow" clusters. In a regression
-weighted by resolved request count, the share of a tract's population that is
-non-white is <b>associated with</b> longer waits
-(+{wls_minority}&nbsp;days per percentage point, p&nbsp;=&nbsp;{wls_minority_p:.2f}), a
-marginal result that does not reach significance at the 5% level, while income shows
-no association at all (p&nbsp;=&nbsp;{wls_income_p:.2f}). Spatial clustering, not the
-composition regression, is the strongest equity evidence here.</p>
+<p><b>Second, response times are not spatially random.</b> Tract-level median
+resolution times show statistically significant spatial clustering (Moran's I =
+<b>{moran}</b>; {esc(moran_note)}), and <b>{lisa_n}</b> tracts sit in significant
+high&ndash;high "slow" clusters &mdash; slow tracts are slow <i>together</i>, which
+points to a systemic geographic pattern rather than unrelated local problems.</p>
 
-<p><b>A finding that did <i>not</i> hold is worth stating just as plainly.</b>
-Requests in grade&nbsp;D ("redlined") tracts are <b>not</b> slower than in grade&nbsp;A
-tracts in this dataset: the tract medians are {dva_median_a}&nbsp;days for A against
-{dva_median_d}&nbsp;days for D (ratio {dva_ratio}×, Mann&ndash;Whitney one-sided
-p&nbsp;=&nbsp;{dva_p:.2f}) &mdash; if anything the ordering runs the other way. The
-inequity this analysis does establish is <b>spatial and racial composition</b>, not a
-clean 1930s-grade gradient. Reporting the grade comparison as significant would be a
-false positive from a small grade-A sample (n&nbsp;=&nbsp;{grade_a_n}), so it is reported
-as a null result instead.</p>
+<p><b>A finding that did not hold is worth stating just as plainly.</b> Requests in
+grade&nbsp;D ("redlined") tracts are <b>not</b> slower than in grade&nbsp;A tracts: the
+tract medians are <b>{dva_median_a}</b>&nbsp;days for A against <b>{dva_median_d}</b>
+for D (ratio {dva_ratio}×), and the one-sided test for "D is slower" returns
+p&nbsp;=&nbsp;{dva_p:.2f}. The expected 1930s redlining gradient is not present in 311
+response time. With grade&nbsp;A containing only {grade_a_n} tracts that comparison is
+weak in both directions, so it is reported as an unresolved null rather than as
+evidence of either equity or inequity.</p>
+
+<p>What the tract-level regression does show is a <b>race and income</b> pattern
+rather than a redlining-map pattern: a one-point increase in a tract's non-white
+population share is associated with <b>+{wls_minority}</b> days to resolution
+(p&nbsp;=&nbsp;{wls_minority_p:.3f}), and each additional $10,000 of median household
+income with <b>{wls_income}</b> days (p&nbsp;=&nbsp;{wls_income_p:.0e}). The income term is
+the stronger of the two.</p>
 
 <p><b>Third, demand is forecastable but seasonal naive is a hard baseline to beat.</b>
 Across a 12-month hold-out the strongest model was <b>{esc(best_model)}</b>; weather
@@ -626,20 +628,16 @@ income and percentage non-white population, with marker size scaled by resolved
 requests.</figcaption>
 </figure>
 
-<div class="callout"><b>Finding 2.</b> In a weighted least-squares regression of
-tract median response time on median income and racial composition (weighted by
-resolved request count, HC3 robust errors, n&nbsp;=&nbsp;{wls_n} tracts, the coefficient
-on percentage non-white is <b>{wls_minority}</b> (p&nbsp;=&nbsp;{wls_minority_p:.2f} &mdash;
-marginal, not significant at the 5% level) and on income per $10,000 is
-<b>{wls_income}</b> (p&nbsp;=&nbsp;{wls_income_p:.2f}, i.e. not significant). The
-point estimate runs in the expected direction &mdash; a higher non-white share is
-associated with a longer wait &mdash; but with this sample it does not clear
-conventional significance, so it is reported as suggestive rather than established.
-Note that this regression is sensitive to the 13 tracts whose ACS median-income
-estimate is unavailable and therefore excluded; those tracts are disproportionately
-disadvantaged, and their exclusion is a real limitation of the estimate, not a
-detail. This is a correlate, not a mechanism: neither staffing, routing, nor intake
-channel is observed here.</div>
+<div class="callout"><b>Finding 2.</b> A weighted least-squares regression of tract
+median response time on median income and racial composition (weighted by resolved
+request count, n&nbsp;=&nbsp;{wls_n} tracts) gives a coefficient of <b>{wls_minority}</b>
+days per percentage point of non-white population (p&nbsp;=&nbsp;{wls_minority_p:.3f}) and
+<b>{wls_income}</b> days per additional $10,000 of median household income
+(p&nbsp;=&nbsp;{wls_income_p:.0e}). Both run in the expected direction &mdash; more non-white
+and lower-income tracts wait longer &mdash; and the income term is the stronger of the
+two. These are correlates, not mechanisms: neither staffing, routing, nor intake
+channel is observed here. This regression necessarily drops the tracts whose ACS
+income estimate is unavailable, which are disproportionately disadvantaged.</div>
 
 <h3>6.3 Spatial autocorrelation</h3>
 
@@ -651,9 +649,9 @@ problems. If it clusters, it suggests a systemic geographic pattern. Moran's I w
 clustered: Moran's I = <b>{moran}</b> ({esc(moran_note)}). Local Moran (LISA)
 identifies <b>{lisa_n} tracts</b> in significant high&ndash;high "slow" clusters &mdash;
 neighbouring slow tracts are slow together, so the pattern is systemic rather than a
-set of unrelated local problems. Those clusters are concentrated in tracts with a
-higher non-white population share; see Finding 1 for what the 1930s grade comparison
-does and does not show.</div>
+set of unrelated local problems. This spatial result is the most robust equity
+finding in the analysis; see Finding&nbsp;1 for why the 1930s grade comparison does not
+reproduce it.</div>
 
 <figure>
 <img src="{img_uri('02_lisa_clusters.png') or ''}" style="width:78%">

@@ -65,3 +65,7 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+
+# Stray nested working copy created outside this session; not a project
+# deliverable, so it is excluded rather than committed as an embedded repo.
+chicago-311-analytics/
